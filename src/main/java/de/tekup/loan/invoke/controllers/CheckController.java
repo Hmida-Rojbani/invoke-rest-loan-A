@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import de.tekup.loan.invoke.services.RestClient;
+import de.tekup.loan.invoke.services.RestClientFeign;
 import de.tekup.loan.invoke.ui.types.CustomerRequest;
 import de.tekup.loan.invoke.ui.types.WsResponse;
 
@@ -15,6 +16,9 @@ import de.tekup.loan.invoke.ui.types.WsResponse;
 public class CheckController {
 	@Autowired
 	private RestClient client;
+	// alternative way
+	@Autowired
+	private RestClientFeign fiegnClient;
 	
 	@GetMapping("/check/customer")
 	public String checkCustomerForm(Model model) {
@@ -28,7 +32,9 @@ public class CheckController {
 	public String checkResults(@ModelAttribute("request") CustomerRequest request,
 			Model model) {
 		//invoke of web service
-		WsResponse response = client.getLoanStatus(request);
+		//WsResponse response = client.getLoanStatus(request);
+		// other way
+		WsResponse response = fiegnClient.consumeByFeign(request);
 		model.addAttribute("response",response);
 		return "results";
 	}
